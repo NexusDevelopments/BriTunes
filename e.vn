@@ -5,8 +5,8 @@ NODE_ENV=development
 # MongoDB Configuration
 MONGODB_URI=mongodb://localhost:27017/britunes
 
-# JWT Secret
-JWT_SECRET=your_jwt_secret_key_here_change_in_production
+# JWT Secr 
+JWT_SECRET=BriTunesSecretKey123!
 
 # Music APIs (All FREE - No API keys required!)
 # Deezer API - Completely free, no registration needed
