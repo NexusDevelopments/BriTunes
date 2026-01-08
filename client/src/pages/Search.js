@@ -19,12 +19,32 @@ const Search = () => {
 
     setLoading(true);
     try {
-      const response = await axios.get('/api/music/search', {
-        params: { q: query, limit: 30 }
+      // Search Deezer API directly
+      const response = await axios.get(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=50`);
+      
+      const tracks = response.data.data || [];
+      
+      // Extract unique artists and albums
+      const artistsMap = new Map();
+      const albumsMap = new Map();
+      
+      tracks.forEach(track => {
+        if (track.artist && !artistsMap.has(track.artist.id)) {
+          artistsMap.set(track.artist.id, track.artist);
+        }
+        if (track.album && !albumsMap.has(track.album.id)) {
+          albumsMap.set(track.album.id, track.album);
+        }
       });
-      setResults(response.data);
+
+      setResults({
+        tracks: tracks,
+        artists: Array.from(artistsMap.values()),
+        albums: Array.from(albumsMap.values())
+      });
     } catch (error) {
       console.error('Search error:', error);
+      setResults({ tracks: [], artists: [], albums: [] });
     } finally {
       setLoading(false);
     }
@@ -77,79 +97,76 @@ const Search = () => {
                 className={`tab ${activeTab === 'tracks' ? 'active' : ''}`}
                 onClick={() => setActiveTab('tracks')}
               >
-                Tracks ({results.tracks?.items?.length || 0})
+                Tracks ({results.tracks?.length || 0})
               </button>
               <button
                 className={`tab ${activeTab === 'artists' ? 'active' : ''}`}
                 onClick={() => setActiveTab('artists')}
               >
-                Artists ({results.artists?.items?.length || 0})
+                Artists ({results.artists?.length || 0})
               </button>
               <button
                 className={`tab ${activeTab === 'albums' ? 'active' : ''}`}
                 onClick={() => setActiveTab('albums')}
               >
-                Albums ({results.albums?.items?.length || 0})
+                Albums ({results.albums?.length || 0})
               </button>
             </div>
 
-            {(activeTab === 'all' || activeTab === 'tracks') && results.tracks?.items && (
+            {(activeTab === 'all' || activeTab === 'tracks') && results.tracks && results.tracks.length > 0 && (
               <section className="result-section">
                 <h2>Tracks</h2>
-                <div className="grid grid-4">
-                  {results.tracks.items.slice(0, activeTab === 'all' ? 8 : undefined).map((track) => (
-                    <TrackCard key={track.id} track={track} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {(activeTab === 'all' || activeTab === 'artists') && results.artists?.items && (
-              <section className="result-section">
-                <h2>Artists</h2>
-                <div className="grid grid-3">
-                  {results.artists.items.slice(0, activeTab === 'all' ? 6 : undefined).map((artist) => (
-                    <div
-                      key={artist.id}
-                      className="artist-card"
-                      onClick={() => handleArtistClick(artist.id)}
-                    >
-                      <div className="artist-image">
-                        {artist.images && artist.images.length > 0 ? (
-                          <img src={artist.images[0].url} alt={artist.name} />
-                        ) : (
-                          <div className="artist-image-placeholder">
-                            <FaUser />
-                          </div>
-                        )}
+                <div className="tracks-list">
+                  {results.tracks.slice(0, activeTab === 'all' ? 10 : undefined).map((track, index) => (
+                    <div key={track.id} className="track-item">
+                      <div className="track-number">#{index + 1}</div>
+                      <img src={track.album.cover_medium} alt={track.title} className="track-cover" />
+                      <div className="track-details">
+                        <h4>{track.title}</h4>
+                        <p>{track.artist.name}</p>
                       </div>
-                      <h3>{artist.name}</h3>
-                      <p>{artist.followers?.total?.toLocaleString()} followers</p>
+                      <div className="track-duration">{Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}</div>
+                      <a href={track.preview} target="_blank" rel="noopener noreferrer" className="play-button">
+                        <FaMusic />
+                      </a>
                     </div>
                   ))}
                 </div>
               </section>
             )}
 
-            {(activeTab === 'all' || activeTab === 'albums') && results.albums?.items && (
+            {(activeTab === 'all' || activeTab === 'artists') && results.artists && results.artists.length > 0 && (
+              <section className="result-section">
+                <h2>Artists</h2>
+                <div className="grid grid-3">
+                  {results.artists.slice(0, activeTab === 'all' ? 6 : undefined).map((artist) => (
+                    <div
+                      key={artist.id}
+                      className="artist-card"
+                      onClick={() => handleArtistClick(artist.id)}
+                    >
+                      <div className="artist-image">
+                        <img src={artist.picture_medium} alt={artist.name} />
+                      </div>
+                      <h3>{artist.name}</h3>
+                      <p>Artist</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {(activeTab === 'all' || activeTab === 'albums') && results.albums && results.albums.length > 0 && (
               <section className="result-section">
                 <h2>Albums</h2>
                 <div className="grid grid-4">
-                  {results.albums.items.slice(0, activeTab === 'all' ? 8 : undefined).map((album) => (
+                  {results.albums.slice(0, activeTab === 'all' ? 8 : undefined).map((album) => (
                     <div key={album.id} className="album-card">
                       <div className="album-image">
-                        {album.images && album.images.length > 0 ? (
-                          <img src={album.images[0].url} alt={album.name} />
-                        ) : (
-                          <div className="album-image-placeholder">
-                            <FaMusic />
-                          </div>
-                        )}
+                        <img src={album.cover_medium} alt={album.title} />
                       </div>
                       <div className="album-info">
-                        <h3>{album.name}</h3>
-                        <p>{album.artists?.map(a => a.name).join(', ')}</p>
-                        <span className="album-year">{album.release_date?.split('-')[0]}</span>
+                        <h3>{album.title}</h3>
                       </div>
                     </div>
                   ))}
