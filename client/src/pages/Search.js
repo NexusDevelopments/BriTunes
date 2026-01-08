@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch, FaMusic } from 'react-icons/fa';
+import { PlayerContext } from '../context/PlayerContext';
 import './Search.css';
 
 const Search = () => {
@@ -10,6 +11,8 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const navigate = useNavigate();
+
+  const { playTrack } = useContext(PlayerContext);
 
   // CORS proxy to access Deezer API
   const CORS_PROXY = 'https://corsproxy.io/?';
@@ -129,9 +132,9 @@ const Search = () => {
                         <p>{track.artist.name}</p>
                       </div>
                       <div className="track-duration">{Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}</div>
-                      <a href={track.preview} target="_blank" rel="noopener noreferrer" className="play-button">
+                      <button onClick={() => playTrack(track, results.tracks)} className="play-button">
                         <FaMusic />
-                      </a>
+                      </button>
                     </div>
                   ))}
                 </div>

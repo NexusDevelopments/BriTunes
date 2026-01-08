@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { FaMusic, FaPlay } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { PlayerContext } from '../context/PlayerContext';
 import './Home.css';
 
 const Home = () => {
@@ -10,6 +11,8 @@ const Home = () => {
   const [topArtists, setTopArtists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const { playTrack } = useContext(PlayerContext);
 
   // CORS proxy to access Deezer API
   const CORS_PROXY = 'https://corsproxy.io/?';
@@ -85,9 +88,9 @@ const Home = () => {
                   <p>{track.artist.name}</p>
                 </div>
                 <div className="track-duration">{Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}</div>
-                <a href={track.preview} target="_blank" rel="noopener noreferrer" className="play-button">
+                <button onClick={() => playTrack(track, charts)} className="play-button">
                   <FaPlay />
-                </a>
+                </button>
               </div>
             ))}
           </div>
