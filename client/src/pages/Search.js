@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaSearch, FaMusic, FaUser } from 'react-icons/fa';
-import TrackCard from '../components/TrackCard';
+import { FaSearch, FaMusic } from 'react-icons/fa';
 import './Search.css';
 
 const Search = () => {
