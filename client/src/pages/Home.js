@@ -11,6 +11,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // CORS proxy to access Deezer API
+  const CORS_PROXY = 'https://corsproxy.io/?';
+  const DEEZER_API = 'https://api.deezer.com';
+
   useEffect(() => {
     fetchMusic();
   }, []);
@@ -20,15 +24,15 @@ const Home = () => {
       setLoading(true);
       
       // Fetch chart tracks from Deezer (top 50 songs globally)
-      const chartsResponse = await axios.get('https://api.deezer.com/chart/0/tracks?limit=20');
+      const chartsResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/chart/0/tracks?limit=20')}`);
       setCharts(chartsResponse.data.data || []);
 
       // Fetch new releases (albums)
-      const albumsResponse = await axios.get('https://api.deezer.com/chart/0/albums?limit=12');
+      const albumsResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/chart/0/albums?limit=12')}`);
       setNewReleases(albumsResponse.data.data || []);
 
       // Fetch top artists
-      const artistsResponse = await axios.get('https://api.deezer.com/chart/0/artists?limit=12');
+      const artistsResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/chart/0/artists?limit=12')}`);
       setTopArtists(artistsResponse.data.data || []);
 
       setError('');

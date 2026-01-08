@@ -11,6 +11,10 @@ const Search = () => {
   const [activeTab, setActiveTab] = useState('all');
   const navigate = useNavigate();
 
+  // CORS proxy to access Deezer API
+  const CORS_PROXY = 'https://corsproxy.io/?';
+  const DEEZER_API = 'https://api.deezer.com';
+
   const handleSearch = async (e) => {
     e.preventDefault();
     
@@ -18,8 +22,8 @@ const Search = () => {
 
     setLoading(true);
     try {
-      // Search Deezer API directly
-      const response = await axios.get(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=50`);
+      // Search Deezer API directly with CORS proxy
+      const response = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/search?q=' + encodeURIComponent(query) + '&limit=50')}`);
       
       const tracks = response.data.data || [];
       
