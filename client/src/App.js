@@ -22,21 +22,9 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/" element={
-                <PrivateRoute>
-                  <Home />
-                </PrivateRoute>
-              } />
-              <Route path="/search" element={
-                <PrivateRoute>
-                  <Search />
-                </PrivateRoute>
-              } />
-              <Route path="/artist/:id" element={
-                <PrivateRoute>
-                  <Artist />
-                </PrivateRoute>
-              } />
+              <Route path="/" element={<Home />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/artist/:id" element={<Artist />} />
               <Route path="/library" element={
                 <PrivateRoute>
                   <Library />
