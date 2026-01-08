@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { FaMusic, FaSearch, FaUserCircle, FaSignOutAlt, FaBell } from 'react-icons/fa';
+import { FaMusic, FaSearch, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import './Navbar.css';
 
 const Navbar = () => {

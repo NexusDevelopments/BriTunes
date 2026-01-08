@@ -13,10 +13,6 @@ const Artist = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchArtistData();
-  }, [id]);
-
   const fetchArtistData = async () => {
     try {
       setLoading(true);
@@ -42,7 +38,10 @@ const Artist = () => {
       setLoading(false);
     }
   };
-
+  useEffect(() => {
+    fetchArtistData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
   const handleFollowToggle = async () => {
     try {
       if (isFollowing) {

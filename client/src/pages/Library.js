@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaPlus, FaMusic, FaTrash, FaEdit } from 'react-icons/fa';
+import { FaPlus, FaMusic, FaTrash } from 'react-icons/fa';
 import './Library.css';
 
 const Library = () => {

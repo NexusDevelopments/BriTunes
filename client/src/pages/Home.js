@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import TrackCard from '../components/TrackCard';
-import { FaMusic, FaBell } from 'react-icons/fa';
+import { FaMusic } from 'react-icons/fa';
 import './Home.css';
 
 const Home = () => {
@@ -27,11 +26,6 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePlay = (track) => {
-    console.log('Playing:', track);
-    // Implement play functionality
   };
 
   if (loading) {
