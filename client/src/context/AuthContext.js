@@ -32,9 +32,9 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post('/api/auth/login', { username, password });
       const { token, ...userData } = response.data;
       
       localStorage.setItem('token', token);
@@ -51,11 +51,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (username, email, password, displayName) => {
+  const register = async (username, password, displayName) => {
     try {
       const response = await axios.post('/api/auth/register', { 
         username, 
-        email, 
         password, 
         displayName 
       });

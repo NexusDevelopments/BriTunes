@@ -1,13 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { FaMusic } from 'react-icons/fa';
+import { FaMusic, FaCheck, FaTimes } from 'react-icons/fa';
 import './Auth.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
     confirmPassword: '',
     displayName: ''
@@ -18,6 +17,31 @@ const Register = () => {
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const badWords = ['fuck', 'shit', 'bitch', 'ass', 'damn', 'crap', 'hell', 'bastard', 'dick', 'pussy', 'cock', 'slut', 'whore', 'nigger', 'nigga', 'fag', 'retard'];
+
+  const containsProfanity = (text) => {
+    const lowerText = text.toLowerCase();
+    return badWords.some(word => lowerText.includes(word));
+  };
+
+  const checkPasswordStrength = () => {
+    const password = formData.password;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const isLongEnough = password.length >= 8;
+    
+    return {
+      hasUpperCase,
+      hasLowerCase,
+      hasNumber,
+      isLongEnough,
+      isStrong: hasUpperCase && hasLowerCase && hasNumber && isLongEnough
+    };
+  };
+
+  const passwordStrength = checkPasswordStrength();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -26,13 +50,37 @@ const Register = () => {
     e.preventDefault();
     setError('');
 
+    // Username validation
+    if (formData.username.length < 3 || formData.username.length > 20) {
+      setError('Username must be between 3-20 characters');
+      return;
+    }
+
+    if (containsProfanity(formData.username)) {
+      setError('Username contains inappropriate language');
+      return;
+    }
+
+    // Display name validation
+    const displayName = formData.displayName || formData.username;
+    if (displayName.length > 20) {
+      setError('Display name must be 20 characters or less');
+      return;
+    }
+
+    if (containsProfanity(displayName)) {
+      setError('Display name contains inappropriate language');
+      return;
+    }
+
+    // Password validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (!passwordStrength.isStrong) {
+      setError('Password must be at least 8 characters and contain uppercase, lowercase, and a number');
       return;
     }
 
@@ -40,9 +88,8 @@ const Register = () => {
 
     const result = await register(
       formData.username,
-      formData.email,
       formData.password,
-      formData.displayName || formData.username
+      displayName
     );
 
     if (result.success) {
@@ -73,9 +120,11 @@ const Register = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Choose a username"
+              placeholder="Choose a username (3-20 characters)"
+              maxLength={20}
               required
             />
+            <small style={{ color: '#888', fontSize: '12px' }}>No inappropriate language allowed</small>
           </div>
 
           <div className="input-group">
@@ -86,18 +135,7 @@ const Register = () => {
               value={formData.displayName}
               onChange={handleChange}
               placeholder="How should we call you?"
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              required
+              maxLength={20}
             />
           </div>
 
@@ -108,9 +146,25 @@ const Register = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Create a password"
+              placeholder="Create a strong password"
               required
             />
+            {formData.password && (
+              <div style={{ marginTop: '8px', fontSize: '13px' }}>
+                <div style={{ color: passwordStrength.isLongEnough ? '#22c55e' : '#ef4444', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  {passwordStrength.isLongEnough ? <FaCheck /> : <FaTimes />} At least 8 characters
+                </div>
+                <div style={{ color: passwordStrength.hasUpperCase ? '#22c55e' : '#ef4444', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  {passwordStrength.hasUpperCase ? <FaCheck /> : <FaTimes />} One uppercase letter
+                </div>
+                <div style={{ color: passwordStrength.hasLowerCase ? '#22c55e' : '#ef4444', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  {passwordStrength.hasLowerCase ? <FaCheck /> : <FaTimes />} One lowercase letter
+                </div>
+                <div style={{ color: passwordStrength.hasNumber ? '#22c55e' : '#ef4444', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  {passwordStrength.hasNumber ? <FaCheck /> : <FaTimes />} One number
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="input-group">

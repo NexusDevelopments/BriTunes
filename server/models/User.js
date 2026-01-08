@@ -7,12 +7,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
-    minlength: 3
+    minlength: 3,
+    maxlength: 20
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
+    required: false,
+    unique: false,
+    sparse: true,
     trim: true,
     lowercase: true
   },
@@ -23,7 +25,8 @@ const userSchema = new mongoose.Schema({
   },
   displayName: {
     type: String,
-    default: ''
+    default: '',
+    maxlength: 20
   },
   profileImage: {
     type: String,
