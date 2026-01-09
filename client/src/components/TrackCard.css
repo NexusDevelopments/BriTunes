@@ -1,18 +1,22 @@
 .track-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 15px;
+  background: #181818;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
 }
 
 .track-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(37, 99, 235, 0.5);
+  background: #282828;
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.track-card:hover .play-button {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .track-image {
@@ -21,7 +25,8 @@
   padding-bottom: 100%;
   border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .track-image img {
@@ -43,8 +48,38 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 40px;
+  color: rgba(59, 130, 246, 0.3);
+  font-size: 48px;
+}
+
+.play-button {
+  position: absolute;
+  bottom: 24px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3);
+}
+
+.play-button:hover {
+  background: #60a5fa;
+  transform: translateY(0) scale(1.05);
+}
+
+.play-button svg {
+  width: 24px;
+  height: 24px;
+  color: #000000;
 }
 
 .track-overlay {
@@ -53,47 +88,28 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  border-radius: 8px;
 }
 
 .track-card:hover .track-overlay {
   opacity: 1;
 }
 
-.play-button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #2563eb;
-  border: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 18px;
-}
-
-.play-button:hover {
-  background: #1d4ed8;
-  transform: scale(1.1);
-}
-
 .track-info {
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .track-name {
   font-size: 16px;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 6px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,7 +117,8 @@
 
 .track-artist {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  color: #b3b3b3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

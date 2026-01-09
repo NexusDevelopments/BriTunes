@@ -12,27 +12,26 @@
 }
 
 .preview-notification {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: 30px 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
+  background: #282828;
+  border: 1px solid #3b82f6;
+  border-radius: 8px;
+  padding: 24px 32px;
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.3), 0 6px 8px rgba(0, 0, 0, 0.2);
   max-width: 500px;
   width: 90%;
   position: relative;
-  animation: slideDown 0.3s ease-out;
+  animation: slideDown 0.2s ease-out;
   pointer-events: all;
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translateY(-20px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -41,10 +40,10 @@
 }
 
 .notification-content h3 {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 15px;
-  color: white;
+  margin-bottom: 12px;
+  color: #ffffff;
 }
 
 .notification-content p {
