@@ -26,6 +26,7 @@ export const PlayerProvider = ({ children }) => {
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnded);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const playTrack = (track, newQueue = []) => {
