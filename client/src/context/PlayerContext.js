@@ -30,29 +30,33 @@ export const PlayerProvider = ({ children }) => {
   }, []);
 
   const playTrack = (track, newQueue = []) => {
+    console.log('playTrack called with:', track);
+    
     if (currentTrack?.id === track.id && isPlaying) {
       pause();
+      return;
+    }
+    
+    // Set track and queue immediately so UI updates
+    setCurrentTrack(track);
+    if (newQueue.length > 0) {
+      setQueue(newQueue);
+    }
+    
+    // Play Deezer preview
+    if (track.preview) {
+      audioRef.current.src = track.preview;
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          console.log('Now playing:', track.title);
+        })
+        .catch(error => {
+          console.error('Error playing track:', error);
+          setIsPlaying(false);
+        });
     } else {
-      setCurrentTrack(track);
-      if (newQueue.length > 0) {
-        setQueue(newQueue);
-      }
-      
-      // Play Deezer preview
-      if (track.preview) {
-        audioRef.current.src = track.preview;
-        audioRef.current.play()
-          .then(() => {
-            setIsPlaying(true);
-            console.log('Playing:', track.title);
-          })
-          .catch(error => {
-            console.error('Error playing track:', error);
-            setIsPlaying(false);
-          });
-      } else {
-        console.error('No preview URL available for track');
-      }
+      console.error('No preview URL available for track');
     }
   };
 
