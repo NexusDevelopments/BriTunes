@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch, FaMusic } from 'react-icons/fa';
 import { PlayerContext } from '../context/PlayerContext';
@@ -167,14 +167,14 @@ const Search = () => {
                 <h2>Albums</h2>
                 <div className="grid grid-4">
                   {results.albums.slice(0, activeTab === 'all' ? 8 : undefined).map((album) => (
-                    <div key={album.id} className="album-card">
+                    <Link to={`/album/${album.id}`} key={album.id} className="album-card">
                       <div className="album-image">
                         <img src={album.cover_medium} alt={album.title} />
                       </div>
                       <div className="album-info">
                         <h3>{album.title}</h3>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </section>

@@ -86,19 +86,26 @@ const Register = () => {
 
     setLoading(true);
 
-    const result = await register(
-      formData.username,
-      formData.password,
-      displayName
-    );
-
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.error);
+    // Create local user session (since backend is not being used)
+    try {
+      const userData = {
+        username: formData.username,
+        displayName: displayName,
+        createdAt: new Date().toISOString()
+      };
+      
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', 'local-session-' + Date.now());
+      
+      // Simulate successful registration
+      setTimeout(() => {
+        navigate('/');
+        window.location.reload(); // Refresh to update auth state
+      }, 500);
+    } catch (error) {
+      setError('Registration failed. Please try again.');
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (

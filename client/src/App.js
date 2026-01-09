@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Search from './pages/Search';
 import Artist from './pages/Artist';
+import Album from './pages/Album';
 import Library from './pages/Library';
 import Profile from './pages/Profile';
 import PrivateRoute from './components/PrivateRoute';
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/artist/:id" element={<Artist />} />
+                <Route path="/album/:id" element={<Album />} />
                 <Route path="/library" element={
                   <PrivateRoute>
                     <Library />

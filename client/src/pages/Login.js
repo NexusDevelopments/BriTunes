@@ -18,15 +18,25 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    const result = await login(username, password);
-
-    if (result.success) {
-      navigate('/');
-    } else {
-      setError(result.error);
-    }
+    // Simple local login - check if user exists in localStorage
+    const storedUser = localStorage.getItem('user');
     
-    setLoading(false);
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      if (userData.username === username) {
+        localStorage.setItem('token', 'local-session-' + Date.now());
+        setTimeout(() => {
+          navigate('/');
+          window.location.reload();
+        }, 500);
+      } else {
+        setError('Invalid username or password');
+        setLoading(false);
+      }
+    } else {
+      setError('No account found. Please register first.');
+      setLoading(false);
+    }
   };
 
   return (

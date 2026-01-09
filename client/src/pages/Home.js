@@ -140,7 +140,7 @@ const Home = () => {
 
           <div className="grid grid-4">
             {newReleases.map((album) => (
-              <div key={album.id} className="album-card">
+              <Link to={`/album/${album.id}`} key={album.id} className="album-card">
                 <div className="album-image">
                   <img src={album.cover_medium} alt={album.title} />
                 </div>
@@ -149,7 +149,7 @@ const Home = () => {
                   <p className="album-artist">{album.artist.name}</p>
                   <p className="album-type">{album.nb_tracks} tracks</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

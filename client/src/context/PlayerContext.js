@@ -29,7 +29,7 @@ export const PlayerProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const playTrack = (track, newQueue = []) => {
+  const playTrack = async (track, newQueue = []) => {
     if (currentTrack?.id === track.id && isPlaying) {
       pause();
     } else {
@@ -37,9 +37,43 @@ export const PlayerProvider = ({ children }) => {
       if (newQueue.length > 0) {
         setQueue(newQueue);
       }
-      audioRef.current.src = track.preview;
-      audioRef.current.play();
-      setIsPlaying(true);
+      
+      // Try to get full song from YouTube Music/YouTube
+      try {
+        const searchQuery = `${track.title} ${track.artist?.name || ''} audio`;
+        const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+        
+        // Use a YouTube to MP3 API service for full audio
+        // This uses a free API that extracts audio from YouTube
+        const apiUrl = `https://yt-api.p.rapidapi.com/dl?id=${encodeURIComponent(searchQuery)}`;
+        
+        // Fallback: Use invidious instance to get audio stream
+        const invidiousInstance = 'https://invidious.jing.rocks';
+        const searchUrl = `${invidiousInstance}/api/v1/search?q=${encodeURIComponent(searchQuery)}&type=video`;
+        
+        const response = await fetch(searchUrl);
+        const data = await response.json();
+        
+        if (data && data.length > 0) {
+          const videoId = data[0].videoId;
+          const audioUrl = `${invidiousInstance}/latest_version?id=${videoId}&itag=140`; // 140 is audio-only format
+          
+          audioRef.current.src = audioUrl;
+          audioRef.current.play();
+          setIsPlaying(true);
+        } else {
+          // Fallback to preview if YouTube fetch fails
+          audioRef.current.src = track.preview;
+          audioRef.current.play();
+          setIsPlaying(true);
+        }
+      } catch (error) {
+        console.error('Error fetching full song:', error);
+        // Fallback to Deezer preview
+        audioRef.current.src = track.preview;
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaCheckCircle, FaPlus, FaPlay } from 'react-icons/fa';
 import { PlayerContext } from '../context/PlayerContext';
@@ -137,7 +137,7 @@ const Artist = () => {
           <h2>Albums</h2>
           <div className="grid grid-4">
             {albums.map((album) => (
-              <div key={album.id} className="album-card">
+              <Link to={`/album/${album.id}`} key={album.id} className="album-card">
                 <div className="album-image">
                   <img src={album.cover_medium} alt={album.title} />
                 </div>
@@ -145,7 +145,7 @@ const Artist = () => {
                   <h3>{album.title}</h3>
                   <p>{album.release_date?.split('-')[0]} • {album.nb_tracks || 0} tracks</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
