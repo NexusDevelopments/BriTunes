@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaUserCircle, FaCheckCircle, FaPlus, FaPlay } from 'react-icons/fa';
+import { FaCheckCircle, FaPlus, FaPlay } from 'react-icons/fa';
 import { PlayerContext } from '../context/PlayerContext';
 import './Artist.css';
 
