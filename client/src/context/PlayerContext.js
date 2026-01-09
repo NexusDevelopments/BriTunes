@@ -29,7 +29,7 @@ export const PlayerProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const playTrack = async (track, newQueue = []) => {
+  const playTrack = (track, newQueue = []) => {
     if (currentTrack?.id === track.id && isPlaying) {
       pause();
     } else {
@@ -38,48 +38,16 @@ export const PlayerProvider = ({ children }) => {
         setQueue(newQueue);
       }
       
-      // Try to get full song from YouTube
-      try {
-        const searchQuery = `${track.title} ${track.artist?.name || ''} official audio`;
-        
-        // Method 1: Try invidious.io.lol instance (more reliable)
-        const invidiousInstance = 'https://invidious.io.lol';
-        const searchUrl = `${invidiousInstance}/api/v1/search?q=${encodeURIComponent(searchQuery)}&type=video`;
-        
-        const response = await fetch(searchUrl);
-        const data = await response.json();
-        
-        if (data && data.length > 0) {
-          const videoId = data[0].videoId;
-          
-          // Get audio stream URL from invidious
-          const formatUrl = `${invidiousInstance}/api/v1/videos/${videoId}`;
-          const videoData = await fetch(formatUrl);
-          const videoInfo = await videoData.json();
-          
-          // Find audio-only format (itag 140 is m4a audio, itag 251 is webm audio)
-          const audioFormat = videoInfo.adaptiveFormats?.find(f => 
-            f.type?.includes('audio') && (f.itag === 140 || f.itag === 251 || f.type.includes('audio'))
-          );
-          
-          if (audioFormat && audioFormat.url) {
-            audioRef.current.src = audioFormat.url;
-            await audioRef.current.play();
-            setIsPlaying(true);
-            return;
-          }
-        }
-        
-        // Fallback to preview if YouTube fetch fails
+      // Use Deezer preview for now (30 seconds)
+      // Future enhancement: integrate YouTube audio streaming
+      if (track.preview) {
         audioRef.current.src = track.preview;
-        await audioRef.current.play();
-        setIsPlaying(true);
-      } catch (error) {
-        console.error('Error fetching full song:', error);
-        // Fallback to Deezer preview
-        audioRef.current.src = track.preview;
-        audioRef.current.play().catch(e => console.error('Play error:', e));
-        setIsPlaying(true);
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch(error => {
+            console.error('Error playing track:', error);
+            setIsPlaying(false);
+          });
       }
     }
   };
