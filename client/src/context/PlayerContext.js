@@ -43,29 +43,59 @@ export const PlayerProvider = ({ children }) => {
       setQueue(newQueue);
     }
     
-    // Try multiple sources for full song playback
+    // Try to find full song from multiple sources
     try {
-      // Method 1: Try to get full track URL from Deezer (may work with CORS proxy)
-      const CORS_PROXY = 'https://corsproxy.io/?';
-      const trackUrl = `https://api.deezer.com/track/${track.id}`;
+      const searchQuery = `${track.title} ${track.artist?.name || ''}`;
       
-      const response = await fetch(`${CORS_PROXY}${encodeURIComponent(trackUrl)}`);
-      const trackData = await response.json();
+      // Method 1: Try Jamendo (free music platform with full songs)
+      const jamendoClientId = 'f9c34f3d'; // Public demo client ID
+      const jamendoSearch = `https://api.jamendo.com/v3.0/tracks/?client_id=${jamendoClientId}&format=json&limit=1&search=${encodeURIComponent(searchQuery)}&audioformat=mp32`;
       
-      // Try to use the full track URL if available (usually blocked by CORS)
-      if (trackData.link) {
-        // Deezer doesn't provide direct MP3 URLs in the public API
-        // Fall back to preview for now
-        audioRef.current.src = track.preview || trackData.preview;
+      const jamendoResponse = await fetch(jamendoSearch);
+      const jamendoData = await jamendoResponse.json();
+      
+      if (jamendoData.results && jamendoData.results.length > 0) {
+        const jamendoTrack = jamendoData.results[0];
+        if (jamendoTrack.audio) {
+          audioRef.current.src = jamendoTrack.audio;
+          await audioRef.current.play();
+          setIsPlaying(true);
+          console.log('Playing full song from Jamendo:', jamendoTrack.name);
+          return;
+        }
+      }
+      
+      // Method 2: Try Free Music Archive
+      const fmaSearch = `https://freemusicarchive.org/api/get/tracks.json?api_key=60BLHNQCAOUFPIBZ&limit=1&search_query=${encodeURIComponent(searchQuery)}`;
+      
+      try {
+        const fmaResponse = await fetch(fmaSearch);
+        const fmaData = await fmaResponse.json();
+        
+        if (fmaData.dataset && fmaData.dataset.length > 0) {
+          const fmaTrack = fmaData.dataset[0];
+          if (fmaTrack.track_url) {
+            audioRef.current.src = fmaTrack.track_url;
+            await audioRef.current.play();
+            setIsPlaying(true);
+            console.log('Playing full song from FMA:', fmaTrack.track_title);
+            return;
+          }
+        }
+      } catch (fmaError) {
+        console.log('FMA not available, trying next source...');
+      }
+      
+      // Fallback: Use Deezer preview (30 seconds)
+      if (track.preview) {
+        audioRef.current.src = track.preview;
         await audioRef.current.play();
         setIsPlaying(true);
-        console.log('Now playing preview:', track.title, '(30 seconds)');
-      } else {
-        throw new Error('No playback URL available');
+        console.log('Playing Deezer preview (30s):', track.title);
       }
     } catch (error) {
       console.error('Error fetching track:', error);
-      // Fallback to Deezer preview (30 seconds)
+      // Final fallback to Deezer preview
       if (track.preview) {
         audioRef.current.src = track.preview;
         audioRef.current.play()
