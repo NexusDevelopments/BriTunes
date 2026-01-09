@@ -43,50 +43,61 @@ export const PlayerProvider = ({ children }) => {
       setQueue(newQueue);
     }
     
-    // Try to find full song from multiple sources
+    // Try to get full song from YouTube via Invidious
     try {
-      const searchQuery = `${track.title} ${track.artist?.name || ''}`;
+      const searchQuery = `${track.title} ${track.artist?.name || ''} official audio`;
       
-      // Method 1: Try Jamendo (free music platform with full songs)
-      const jamendoClientId = 'f9c34f3d'; // Public demo client ID
-      const jamendoSearch = `https://api.jamendo.com/v3.0/tracks/?client_id=${jamendoClientId}&format=json&limit=1&search=${encodeURIComponent(searchQuery)}&audioformat=mp32`;
+      // Use multiple Invidious instances for reliability
+      const invidiousInstances = [
+        'https://inv.nadeko.net',
+        'https://invidious.private.coffee',
+        'https://yt.artemislena.eu',
+        'https://invidious.nerdvpn.de'
+      ];
       
-      const jamendoResponse = await fetch(jamendoSearch);
-      const jamendoData = await jamendoResponse.json();
-      
-      if (jamendoData.results && jamendoData.results.length > 0) {
-        const jamendoTrack = jamendoData.results[0];
-        if (jamendoTrack.audio) {
-          audioRef.current.src = jamendoTrack.audio;
-          await audioRef.current.play();
-          setIsPlaying(true);
-          console.log('Playing full song from Jamendo:', jamendoTrack.name);
-          return;
-        }
-      }
-      
-      // Method 2: Try Free Music Archive
-      const fmaSearch = `https://freemusicarchive.org/api/get/tracks.json?api_key=60BLHNQCAOUFPIBZ&limit=1&search_query=${encodeURIComponent(searchQuery)}`;
-      
-      try {
-        const fmaResponse = await fetch(fmaSearch);
-        const fmaData = await fmaResponse.json();
-        
-        if (fmaData.dataset && fmaData.dataset.length > 0) {
-          const fmaTrack = fmaData.dataset[0];
-          if (fmaTrack.track_url) {
-            audioRef.current.src = fmaTrack.track_url;
-            await audioRef.current.play();
-            setIsPlaying(true);
-            console.log('Playing full song from FMA:', fmaTrack.track_title);
-            return;
+      for (const instance of invidiousInstances) {
+        try {
+          console.log(`Trying ${instance}...`);
+          
+          // Search for the video
+          const searchUrl = `${instance}/api/v1/search?q=${encodeURIComponent(searchQuery)}&type=video`;
+          const searchResponse = await fetch(searchUrl, { signal: AbortSignal.timeout(5000) });
+          const searchData = await searchResponse.json();
+          
+          if (searchData && searchData.length > 0) {
+            const videoId = searchData[0].videoId;
+            
+            // Get video info with formats
+            const videoUrl = `${instance}/api/v1/videos/${videoId}`;
+            const videoResponse = await fetch(videoUrl, { signal: AbortSignal.timeout(5000) });
+            const videoData = await videoResponse.json();
+            
+            // Find best audio format
+            const audioFormats = videoData.adaptiveFormats?.filter(f => 
+              f.type?.includes('audio')
+            ) || [];
+            
+            if (audioFormats.length > 0) {
+              // Sort by bitrate and get best quality
+              const bestAudio = audioFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
+              
+              if (bestAudio.url) {
+                audioRef.current.src = bestAudio.url;
+                await audioRef.current.play();
+                setIsPlaying(true);
+                console.log('✅ Playing full song from YouTube:', track.title);
+                return;
+              }
+            }
           }
+        } catch (instanceError) {
+          console.log(`${instance} failed, trying next...`);
+          continue;
         }
-      } catch (fmaError) {
-        console.log('FMA not available, trying next source...');
       }
       
-      // Fallback: Use Deezer preview (30 seconds)
+      // Fallback to Deezer preview
+      console.log('YouTube sources unavailable, using Deezer preview');
       if (track.preview) {
         audioRef.current.src = track.preview;
         await audioRef.current.play();
