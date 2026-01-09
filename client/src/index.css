@@ -13,6 +13,9 @@ body {
   background: linear-gradient(135deg, #000000 0%, #0a1929 100%);
   color: #ffffff;
   min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 code {
