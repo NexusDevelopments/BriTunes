@@ -16,6 +16,29 @@
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
 }
 
+/* Mobile styles */
+@media (max-width: 768px) {
+  .music-player {
+    height: auto;
+    padding: 12px 16px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .player-track-info {
+    order: 1;
+  }
+  
+  .player-controls {
+    order: 2;
+  }
+  
+  .player-volume-queue {
+    order: 3;
+    justify-content: center;
+  }
+}
+
 .player-track-info {
   display: flex;
   align-items: center;

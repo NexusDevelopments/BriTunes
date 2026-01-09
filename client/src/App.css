@@ -10,6 +10,18 @@
   padding-bottom: 110px; /* Space for music player */
 }
 
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .app-content {
+    padding-top: 60px;
+    padding-bottom: 180px; /* More space for mobile player */
+  }
+  
+  .container {
+    padding: 12px;
+  }
+}
+
 /* Container */
 .container {
   max-width: 1400px;
