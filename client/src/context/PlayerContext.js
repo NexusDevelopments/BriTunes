@@ -29,7 +29,7 @@ export const PlayerProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const playTrack = (track, newQueue = []) => {
+  const playTrack = async (track, newQueue = []) => {
     console.log('playTrack called with:', track);
     
     if (currentTrack?.id === track.id && isPlaying) {
@@ -43,20 +43,41 @@ export const PlayerProvider = ({ children }) => {
       setQueue(newQueue);
     }
     
-    // Play Deezer preview
-    if (track.preview) {
-      audioRef.current.src = track.preview;
-      audioRef.current.play()
-        .then(() => {
-          setIsPlaying(true);
-          console.log('Now playing:', track.title);
-        })
-        .catch(error => {
-          console.error('Error playing track:', error);
-          setIsPlaying(false);
-        });
-    } else {
-      console.error('No preview URL available for track');
+    // Try multiple sources for full song playback
+    try {
+      // Method 1: Try to get full track URL from Deezer (may work with CORS proxy)
+      const CORS_PROXY = 'https://corsproxy.io/?';
+      const trackUrl = `https://api.deezer.com/track/${track.id}`;
+      
+      const response = await fetch(`${CORS_PROXY}${encodeURIComponent(trackUrl)}`);
+      const trackData = await response.json();
+      
+      // Try to use the full track URL if available (usually blocked by CORS)
+      if (trackData.link) {
+        // Deezer doesn't provide direct MP3 URLs in the public API
+        // Fall back to preview for now
+        audioRef.current.src = track.preview || trackData.preview;
+        await audioRef.current.play();
+        setIsPlaying(true);
+        console.log('Now playing preview:', track.title, '(30 seconds)');
+      } else {
+        throw new Error('No playback URL available');
+      }
+    } catch (error) {
+      console.error('Error fetching track:', error);
+      // Fallback to Deezer preview (30 seconds)
+      if (track.preview) {
+        audioRef.current.src = track.preview;
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+            console.log('Playing preview:', track.title);
+          })
+          .catch(e => {
+            console.error('Play error:', e);
+            setIsPlaying(false);
+          });
+      }
     }
   };
 
