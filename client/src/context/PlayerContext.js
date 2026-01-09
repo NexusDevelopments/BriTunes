@@ -41,13 +41,8 @@ export const PlayerProvider = ({ children }) => {
       // Try to get full song from YouTube Music/YouTube
       try {
         const searchQuery = `${track.title} ${track.artist?.name || ''} audio`;
-        const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
         
-        // Use a YouTube to MP3 API service for full audio
-        // This uses a free API that extracts audio from YouTube
-        const apiUrl = `https://yt-api.p.rapidapi.com/dl?id=${encodeURIComponent(searchQuery)}`;
-        
-        // Fallback: Use invidious instance to get audio stream
+        // Use invidious instance to get audio stream
         const invidiousInstance = 'https://invidious.jing.rocks';
         const searchUrl = `${invidiousInstance}/api/v1/search?q=${encodeURIComponent(searchQuery)}&type=video`;
         

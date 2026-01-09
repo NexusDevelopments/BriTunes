@@ -14,7 +14,6 @@ const Register = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const badWords = ['fuck', 'shit', 'bitch', 'ass', 'damn', 'crap', 'hell', 'bastard', 'dick', 'pussy', 'cock', 'slut', 'whore', 'nigger', 'nigga', 'fag', 'retard'];
