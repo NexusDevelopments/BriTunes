@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
 import { FaMusic, FaCheck, FaTimes } from 'react-icons/fa';
 import './Auth.css';
 
