@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider } from './context/AuthContext';
 import { PlayerProvider } from './context/PlayerContext';
 import Navbar from './components/Navbar';
@@ -44,6 +45,7 @@ function App() {
               </Routes>
             </div>
             <MusicPlayer />
+            <Analytics />
           </div>
         </Router>
       </PlayerProvider>
