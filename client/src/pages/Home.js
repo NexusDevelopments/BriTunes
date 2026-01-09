@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { FaMusic, FaPlay } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaMusic, FaPlay, FaSearch } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
 import { PlayerContext } from '../context/PlayerContext';
 import './Home.css';
 
@@ -11,8 +11,10 @@ const Home = () => {
   const [topArtists, setTopArtists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { playTrack } = useContext(PlayerContext);
+  const navigate = useNavigate();
 
   // CORS proxy to access Deezer API
   const CORS_PROXY = 'https://corsproxy.io/?';
@@ -22,21 +24,37 @@ const Home = () => {
     fetchMusic();
   }, []);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   const fetchMusic = async () => {
     try {
       setLoading(true);
       
-      // Fetch chart tracks from Deezer (top 50 songs globally)
-      const chartsResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/chart/0/tracks?limit=20')}`);
-      setCharts(chartsResponse.data.data || []);
+      // Fetch rap/hip-hop charts
+      const rapSearchResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/search?q=rap&limit=20')}`);
+      setCharts(rapSearchResponse.data.data || []);
 
-      // Fetch new releases (albums)
-      const albumsResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/chart/0/albums?limit=12')}`);
+      // Fetch popular rap albums
+      const albumsResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/search/album?q=hip hop&limit=12')}`);
       setNewReleases(albumsResponse.data.data || []);
 
-      // Fetch top artists
-      const artistsResponse = await axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/chart/0/artists?limit=12')}`);
-      setTopArtists(artistsResponse.data.data || []);
+      // Fetch popular rappers - search for well-known rap artists
+      const rapperNames = ['Drake', 'Kendrick Lamar', 'J. Cole', 'Travis Scott', 'Eminem', 'Kanye West', 'Lil Baby', 'Future', 'Young Thug', 'Polo G', '21 Savage', 'Lil Durk'];
+      const artistPromises = rapperNames.map(name => 
+        axios.get(`${CORS_PROXY}${encodeURIComponent(DEEZER_API + '/search/artist?q=' + name + '&limit=1')}`)
+      );
+      
+      const artistResults = await Promise.all(artistPromises);
+      const artists = artistResults
+        .map(res => res.data.data?.[0])
+        .filter(artist => artist); // Filter out any null results
+      
+      setTopArtists(artists);
 
       setError('');
     } catch (error) {
@@ -63,9 +81,26 @@ const Home = () => {
           <FaMusic className="header-icon" />
           <div>
             <h1>Welcome to BriTunes</h1>
-            <p>Stream 90+ million songs from millions of artists worldwide</p>
+            <p>Stream the hottest rap & hip-hop from 90+ million songs</p>
           </div>
         </div>
+        
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="home-search-form">
+          <div className="home-search-wrapper">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search for songs, artists, or albums..."
+              className="home-search-input"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
+        </form>
       </div>
 
       <div className="container">
@@ -74,8 +109,8 @@ const Home = () => {
         {/* Top Charts */}
         <section className="music-section">
           <div className="section-header">
-            <h2>🔥 Top Charts</h2>
-            <p>Most popular songs right now</p>
+            <h2>🔥 Popular Rap Songs</h2>
+            <p>Hottest rap tracks right now</p>
           </div>
 
           <div className="tracks-grid">
@@ -99,8 +134,8 @@ const Home = () => {
         {/* New Releases */}
         <section className="music-section">
           <div className="section-header">
-            <h2>🎵 New Album Releases</h2>
-            <p>Fresh albums from top artists</p>
+            <h2>🎵 Hip-Hop Albums</h2>
+            <p>Latest and greatest rap albums</p>
           </div>
 
           <div className="grid grid-4">
@@ -122,8 +157,8 @@ const Home = () => {
         {/* Top Artists */}
         <section className="music-section">
           <div className="section-header">
-            <h2>⭐ Top Artists</h2>
-            <p>Most popular artists worldwide</p>
+            <h2>⭐ Popular Rappers</h2>
+            <p>Top hip-hop artists you need to know</p>
           </div>
 
           <div className="grid grid-6">
