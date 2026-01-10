@@ -1,68 +1,60 @@
 import React, {useContext} from 'react'
-import {useHistory, Link} from 'react-router-dom'
-import axios from 'axios'
+import {useNavigate, Link} from 'react-router-dom'
 
 import CardInfo from './CardInfo'
 import CardDisplay from './CardDisplay'
 import Icon from '../icons'
 
-import putWithToken from '../../utilities/putWithToken'
-import {TokenContext, LoginContext, PlayContext, MessageContext} from '../../utilities/context'
+import {LoginContext, PlayContext, MessageContext} from '../../utilities/context'
 
 const PlayCard = React.forwardRef(({info, type}, ref) => {
-    const history = useHistory()
+    const navigate = useNavigate()
     const description = returnDescription(type, info)
-    const {name, id, uri} = info
+    const name = info.name || info.title
+    const id = info.id
     const setMessage = useContext(MessageContext)
 
-    const token = useContext(TokenContext)
     const loggedIn = useContext(LoginContext)
     const updatePlayer = useContext(PlayContext)
-    const source = axios.CancelToken.source()
 
-    let images
-    if (type === 'track'){
-        images = info.album.images
-    }else{
-        images = info.images
-    }
     let image_url
-    try{
-        image_url = images[0].url
-    }catch{
-        image_url = null 
+    if (type === 'track' || type === 'tracks') {
+        image_url = info.album?.cover_medium || info.album?.image || info.cover_medium || info.image
+    } else if (type === 'artist') {
+        image_url = info.picture_medium || info.image
+    } else if (type === 'album') {
+        image_url = info.cover_medium || info.image
+    } else if (type === 'playlist') {
+        image_url = info.picture_medium || info.image
+    } else {
+        try{
+            image_url = info.images?.[0]?.url
+        }catch{
+            image_url = null 
+        }
     }
     
     const playContext = () => {
-        if (uri){
-            var body
-            if (type === 'track'){
-                body = {
-                    uris: [uri]
-                }
-            }else{
-                body = {
-                    context_uri: uri
-                }
-            }
-            const request = putWithToken(`https://api.spotify.com/v1/me/player/play`, token, source, body)
-            request()
-                .then(response => {
-                    if (response.status === 204){
-                        setTimeout(() => updatePlayer(), 1000)
-                    }else{
-                        setMessage(`ERROR: ${response}`)
-                    }
-                })
-                .catch(error => setMessage(`ERROR: ${error}`))
-        }else{
-            history.push(`/tracks`)
+        const audioUrl = info.audio || info.audiodownload || info.preview
+        if (audioUrl) {
+            const audio = new Audio(audioUrl)
+            audio.play().catch(err => {
+                console.error('Playback error:', err)
+                setMessage('Playback error: ' + err.message)
+            })
+            setTimeout(() => updatePlayer(), 100)
+        } else if (info.to) {
+            navigate(info.to)
+        } else {
+            navigate(`/${type}/${id}`)
         }
     }
 
+    const linkTo = info.to? info.to : type === 'track'? `/album/${info.album?.id || id}?highlight=${id}`:`/${type}/${id}`
+
     return (
         <div className='pcWrapper'>
-            <Link to={info.to? info.to : type === 'track'? `/album/${info.album.id}?highlight=${id}`:`/${type}/${id}`} style={{textDecoration:'none', color:'var(--main-text)', zIndex:'3'}}>
+            <Link to={linkTo} style={{textDecoration:'none', color:'var(--main-text)', zIndex:'3'}}>
                 <div ref={ref} className="PlayCard">
                     <CardDisplay url={image_url} type={type}/>
                     <CardInfo title={name} description={description}/>
@@ -87,18 +79,16 @@ const PlayCard = React.forwardRef(({info, type}, ref) => {
 
 
 function returnDescription(type, info){
-    let artists
     switch (type){
         case 'playlist':
-           return info.description || `By ${info.owner.display_name}`
+           return info.description || `By ${info.user?.name || info.creator?.name || 'Jamendo'}`
         case 'album':
-            artists = info.artists.map((object) => object.name)
-            return artists.length === 1 ? artists[0]:artists.join(', ')
+            return info.artist?.name || 'Various Artists'
         case 'artist':
-            return 'artist'
+            return 'Artist'
         case 'track':
-            artists = info.artists.map((object) => object.name)
-            return artists.length === 1 ? artists[0]:artists.join(', ')
+        case 'tracks':
+            return info.artist?.name || 'Unknown Artist'
         default:
             return null
     }

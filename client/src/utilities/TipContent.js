@@ -1,6 +1,6 @@
 import React from 'react'
 import PromptButton from '../components/featured-components/PromptButton'
-import ReactToolTip from 'react-tooltip'
+import {Tooltip as ReactToolTip} from 'react-tooltip'
 
 export default function generateContent(dataTip){
     ReactToolTip.rebuild()

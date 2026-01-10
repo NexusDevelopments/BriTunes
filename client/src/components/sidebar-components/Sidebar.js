@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import ReactToolTip from 'react-tooltip'
+import {Tooltip as ReactToolTip} from 'react-tooltip'
 
 import generateContent from '../../utilities/TipContent'
 import {LoginContext} from '../../utilities/context'

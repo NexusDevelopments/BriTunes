@@ -5,6 +5,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
     "@types/spotify-web-playback-sdk": "^0.1.19",
+    "ajv": "^8.17.1",
     "antd": "^6.1.4",
     "axios": "^1.5.0",
     "i18next": "^25.7.4",
