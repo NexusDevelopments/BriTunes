@@ -9,7 +9,7 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #000000;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f0f 100%);
   color: #ffffff;
   min-height: 100vh;
   overflow-x: hidden;
@@ -23,7 +23,7 @@ code {
 
 #root {
   min-height: 100vh;
-  background: #000000;
+  background: transparent;
 }
 
 /* Scrollbar Styling - Spotify style */
