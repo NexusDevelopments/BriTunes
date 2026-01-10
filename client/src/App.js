@@ -1,53 +1,118 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { PlayerProvider } from './context/PlayerContext';
-import Navbar from './components/Navbar';
-import MusicPlayer from './components/MusicPlayer';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Search from './pages/Search';
-import Artist from './pages/Artist';
-import Album from './pages/Album';
-import Library from './pages/Library';
-import Profile from './pages/Profile';
-import PrivateRoute from './components/PrivateRoute';
-import './App.css';
+import React, {useState, useEffect, useRef} from 'react';
+
+import Sidebar from './components/sidebar-components/Sidebar.js'
+import Logo from './components/sidebar-components/Logo.js'
+import NavList from './components/sidebar-components/NavList.js'
+import NavItem from './components/sidebar-components/NavItem.js'
+import PlayLists from './components/sidebar-components/PlayLists.js'
+import FeaturedPlaylist from './components/sidebar-components/FeaturedPlaylist.js'
+import FeaturedItem from './components/sidebar-components/FeaturedItem.js'
+import OtherPlaylist from './components/sidebar-components/OtherPlaylist.js'
+import InstallCTA from './components/sidebar-components/InstallCTA.js'
+import Footer from './components/footer-components/Footer.js'
+import CTAbanner from './components/footer-components/CTAbanner'
+import Player from './components/footer-components/Player'
+import Featured from './components/featured-components/Featured.js'
+import Loading from './components/featured-components/Loading.js'
+
+import {UserContext, LoginContext, MessageContext, PlayContext} from './utilities/context'
 
 function App() {
+  const [loading, setLoading] = useState(false)
+  const [loggedIn, setloggedIn] = useState(false)
+  const [userInfo, setuserInfo] = useState({})
+  const [playlists, setPlaylists] = useState([])
+
+  const [status, setStatus] = useState(false) 
+  const [message, setMessage] = useState('')
+
+  const timerRef = useRef(null)
+
+  useEffect(() => {
+    // Check localStorage for user session
+    const user = localStorage.getItem('user')
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user)
+        setuserInfo(parsedUser)
+        setloggedIn(true)
+        
+        // Load user's playlists from localStorage
+        const savedPlaylists = localStorage.getItem('playlists')
+        if (savedPlaylists) {
+          setPlaylists(JSON.parse(savedPlaylists))
+        }
+      } catch(e) {
+        console.error('Error loading user:', e)
+      }
+    }
+
+    return () => {
+      clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  const refreshPlaylist = () => {
+    const savedPlaylists = localStorage.getItem('playlists')
+    if (savedPlaylists) {
+      setPlaylists(JSON.parse(savedPlaylists))
+    }
+  }
+
+  const setStatusMessage = (message) => {
+      clearTimeout(timerRef.current)
+      setStatus(true)
+      setMessage(message)
+      timerRef.current = setTimeout(() => {
+          setStatus(false)
+      }, 3000)
+  }
+
+  const playerRef = useRef(null)
+  const updatePlayer = () => {
+    if (playerRef.current && playerRef.current.updateState) {
+      playerRef.current.updateState()
+    }
+  }
+
   return (
-    <AuthProvider>
-      <PlayerProvider>
-        <Router>
-          <div className="App">
-            <Navbar />
-            <div className="app-content">
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/" element={<Home />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/artist/:id" element={<Artist />} />
-                <Route path="/album/:id" element={<Album />} />
-                <Route path="/library" element={
-                  <PrivateRoute>
-                    <Library />
-                  </PrivateRoute>
-                } />
-                <Route path="/profile" element={
-                  <PrivateRoute>
-                    <Profile />
-                  </PrivateRoute>
-                } />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </div>
-            <MusicPlayer />
-          </div>
-        </Router>
-      </PlayerProvider>
-    </AuthProvider>
+    <div className="App">
+      {loading? 
+        <Loading type='app'/> :
+        <MessageContext.Provider value={setStatusMessage}>
+          <LoginContext.Provider value={loggedIn}>
+              
+              <Sidebar>
+                <Logo />
+                <NavList>
+                  <NavItem to='/' exact={true} name='Home' label='Home' />
+                  <NavItem to='/search' exact={true} name='Search' label='Search' />
+                  <NavItem to='/collection' exact={false} name='Library' label='Your Library' style={{ pointerEvents: loggedIn? 'auto':'none'}}/>
+                </NavList>
+                <PlayLists 
+                  top={<FeaturedPlaylist>
+                          <FeaturedItem label='Liked Songs' loggedIn={loggedIn} />
+                        </FeaturedPlaylist>}
+                  bottom={<OtherPlaylist playlists={playlists}/>}
+                />
+                {loggedIn? <InstallCTA /> : null}
+              </Sidebar>
+              
+              <PlayContext.Provider value={updatePlayer}>
+                <UserContext.Provider value={userInfo}>
+                  <Featured loggedIn={loggedIn} playlists={playlists} refreshPlaylist={() => refreshPlaylist()} message={message} status={status} />
+                </UserContext.Provider>
+              </PlayContext.Provider>
+
+              <Footer>
+                {loggedIn? <Player ref={playerRef}/>: <CTAbanner/>}
+              </Footer>
+                  
+          </LoginContext.Provider>
+
+        </MessageContext.Provider>
+      }
+    </div>
   );
 }
 
