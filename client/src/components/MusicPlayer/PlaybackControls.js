@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaPlay, FaPause, FaStepBackward, FaStepForward, FaRandom, FaRedoAlt } from 'react-icons/fa';
-import { setShuffle, setRepeat } from '../../../store/slices/player';
-import playerService from '../../../services/playerService';
+import { setShuffle, setRepeat } from '../../store/slices/player';
+import playerService from '../../services/playerService';
 import './PlaybackControls.css';
 
 const PlaybackControls = () => {

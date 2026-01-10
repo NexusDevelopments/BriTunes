@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import playerService from '../../../services/playerService';
+import playerService from '../../services/playerService';
 import './ProgressBar.css';
 
 const ProgressBar = () => {

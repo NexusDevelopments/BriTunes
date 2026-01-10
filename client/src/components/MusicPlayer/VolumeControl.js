@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaVolumeUp, FaVolumeMute, FaVolumeDown } from 'react-icons/fa';
-import { setVolume } from '../../../store/slices/player';
-import playerService from '../../../services/playerService';
+import { setVolume } from '../../store/slices/player';
+import playerService from '../../services/playerService';
 import './VolumeControl.css';
 
 const VolumeControl = () => {
