@@ -13,6 +13,7 @@ import Footer from './components/footer-components/Footer.js'
 import CTAbanner from './components/footer-components/CTAbanner'
 import Player from './components/footer-components/Player'
 import Featured from './components/featured-components/Featured.js'
+import PageContent from './components/featured-components/PageContent'
 
 import {UserContext, LoginContext, MessageContext, PlayContext} from './utilities/context'
 
@@ -96,7 +97,7 @@ function App() {
             
             <PlayContext.Provider value={updatePlayer}>
               <UserContext.Provider value={userInfo}>
-                <Featured loggedIn={loggedIn} playlists={playlists} refreshPlaylist={() => refreshPlaylist()} message={message} status={status} />
+                <PageContent playlists={playlists} refreshPlaylist={refreshPlaylist} message={message} status={status} />
               </UserContext.Provider>
             </PlayContext.Provider>
 
