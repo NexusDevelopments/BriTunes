@@ -18,7 +18,6 @@ import Loading from './components/featured-components/Loading.js'
 import {UserContext, LoginContext, MessageContext, PlayContext} from './utilities/context'
 
 function App() {
-  const [loading, setLoading] = useState(false)
   const [loggedIn, setloggedIn] = useState(false)
   const [userInfo, setuserInfo] = useState({})
   const [playlists, setPlaylists] = useState([])
@@ -77,41 +76,37 @@ function App() {
 
   return (
     <div className="App">
-      {loading? 
-        <Loading type='app'/> :
-        <MessageContext.Provider value={setStatusMessage}>
-          <LoginContext.Provider value={loggedIn}>
-              
-              <Sidebar>
-                <Logo />
-                <NavList>
-                  <NavItem to='/' exact={true} name='Home' label='Home' />
-                  <NavItem to='/search' exact={true} name='Search' label='Search' />
-                  <NavItem to='/collection' exact={false} name='Library' label='Your Library' style={{ pointerEvents: loggedIn? 'auto':'none'}}/>
-                </NavList>
-                <PlayLists 
-                  top={<FeaturedPlaylist>
-                          <FeaturedItem label='Liked Songs' loggedIn={loggedIn} />
-                        </FeaturedPlaylist>}
-                  bottom={<OtherPlaylist playlists={playlists}/>}
-                />
-                {loggedIn? <InstallCTA /> : null}
-              </Sidebar>
-              
-              <PlayContext.Provider value={updatePlayer}>
-                <UserContext.Provider value={userInfo}>
-                  <Featured loggedIn={loggedIn} playlists={playlists} refreshPlaylist={() => refreshPlaylist()} message={message} status={status} />
-                </UserContext.Provider>
-              </PlayContext.Provider>
+      <MessageContext.Provider value={setStatusMessage}>
+        <LoginContext.Provider value={loggedIn}>
+            
+            <Sidebar>
+              <Logo />
+              <NavList>
+                <NavItem to='/' exact={true} name='Home' label='Home' />
+                <NavItem to='/search' exact={true} name='Search' label='Search' />
+                <NavItem to='/collection' exact={false} name='Library' label='Your Library' style={{ pointerEvents: loggedIn? 'auto':'none'}}/>
+              </NavList>
+              <PlayLists 
+                top={<FeaturedPlaylist>
+                        <FeaturedItem label='Liked Songs' loggedIn={loggedIn} />
+                      </FeaturedPlaylist>}
+                bottom={<OtherPlaylist playlists={playlists}/>}
+              />
+              {loggedIn? <InstallCTA /> : null}
+            </Sidebar>
+            
+            <PlayContext.Provider value={updatePlayer}>
+              <UserContext.Provider value={userInfo}>
+                <Featured loggedIn={loggedIn} playlists={playlists} refreshPlaylist={() => refreshPlaylist()} message={message} status={status} />
+              </UserContext.Provider>
+            </PlayContext.Provider>
 
-              <Footer>
-                {loggedIn? <Player ref={playerRef}/>: <CTAbanner/>}
-              </Footer>
-                  
-          </LoginContext.Provider>
-
-        </MessageContext.Provider>
-      }
+            <Footer>
+              {loggedIn? <Player ref={playerRef}/>: <CTAbanner/>}
+            </Footer>
+                
+        </LoginContext.Provider>
+      </MessageContext.Provider>
     </div>
   );
 }

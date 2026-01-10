@@ -2,7 +2,6 @@ import axios from 'axios';
 
 // Multiple API sources for better coverage
 const JAMENDO_CLIENT_ID = '95a69cf0'; // Public client ID
-const CORS_PROXY = 'https://corsproxy.io/?';
 
 class MusicAPI {
   constructor() {
