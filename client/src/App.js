@@ -12,7 +12,6 @@ import InstallCTA from './components/sidebar-components/InstallCTA.js'
 import Footer from './components/footer-components/Footer.js'
 import CTAbanner from './components/footer-components/CTAbanner'
 import Player from './components/footer-components/Player'
-import Featured from './components/featured-components/Featured.js'
 import PageContent from './components/featured-components/PageContent'
 
 import {UserContext, LoginContext, MessageContext, PlayContext} from './utilities/context'
