@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setState } from '../store/slices/spotify';
-import { setPlaying, setVolume } from '../store/slices/player';
+import { setPlaying } from '../store/slices/player';
 import playerService from '../services/playerService';
 
 export const SpotifyPlayerContext = createContext();

@@ -135,4 +135,5 @@ class PlayerService {
   }
 }
 
-export default new PlayerService();
+const playerServiceInstance = new PlayerService();
+export default playerServiceInstance;

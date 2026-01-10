@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleNowPlaying } from '../../store/slices/ui';
 import { FaTimes, FaHeart, FaRegHeart, FaPlus } from 'react-icons/fa';

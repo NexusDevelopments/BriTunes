@@ -226,4 +226,5 @@ class SpotifyAPI {
   }
 }
 
-export default new SpotifyAPI();
+const spotifyAPIInstance = new SpotifyAPI();
+export default spotifyAPIInstance;

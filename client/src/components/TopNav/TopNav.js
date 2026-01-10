@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaHome, FaSearch, FaCompactDisc, FaMicrophone, FaMusic } from 'react-icons/fa';
+import { FaHome, FaSearch, FaMusic } from 'react-icons/fa';
 import './TopNav.css';
 
 const TopNav = () => {

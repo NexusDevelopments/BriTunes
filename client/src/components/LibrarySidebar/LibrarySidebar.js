@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleSidebar } from '../../store/slices/ui';
-import { fetchLibrary } from '../../store/slices/library';
 import { FaMusic, FaCompactDisc, FaMicrophone, FaHeart, FaPlus, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import './LibrarySidebar.css';
 

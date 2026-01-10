@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import spotifyAPI from '../../services/spotifyAPI';
-import { FaPlay, FaHeart, FaRegHeart, FaClock } from 'react-icons/fa';
+import { FaPlay, FaClock } from 'react-icons/fa';
 import './PlaylistDetail.css';
 
 const PlaylistDetail = () => {
   const { id } = useParams();
   const [playlist, setPlaylist] = useState(null);
-
-  useEffect(() => {
-    if (id) {
-      fetchPlaylist();
-    }
-  }, [id]);
 
   const fetchPlaylist = async () => {
     try {
@@ -22,6 +16,12 @@ const PlaylistDetail = () => {
       console.error('Error fetching playlist:', error);
     }
   };
+
+  useEffect(() => {
+    if (id) {
+      fetchPlaylist();
+    }
+  }, [id, fetchPlaylist]);
 
   const formatDuration = (ms) => {
     const minutes = Math.floor(ms / 60000);

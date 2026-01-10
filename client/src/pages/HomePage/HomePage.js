@@ -5,7 +5,6 @@ import { FaPlay } from 'react-icons/fa';
 import './HomePage.css';
 
 const HomePage = () => {
-  const { user } = useSelector((state) => state.auth);
   const [featured, setFeatured] = useState([]);
   const [newReleases, setNewReleases] = useState([]);
   const [recentlyPlayed, setRecentlyPlayed] = useState([]);

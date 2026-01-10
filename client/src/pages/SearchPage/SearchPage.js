@@ -17,7 +17,7 @@ const SearchPage = () => {
       setQuery(q);
       performSearch(q);
     }
-  }, [searchParams]);
+  }, [searchParams, query]);
 
   const performSearch = async (searchQuery) => {
     if (!searchQuery.trim()) return;

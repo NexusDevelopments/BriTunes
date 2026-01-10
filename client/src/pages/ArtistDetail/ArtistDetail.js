@@ -12,12 +12,6 @@ const ArtistDetail = () => {
   const [relatedArtists, setRelatedArtists] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      fetchArtistData();
-    }
-  }, [id]);
-
   const fetchArtistData = async () => {
     try {
       const [artistData, topTracksData, albumsData, relatedData] = await Promise.all([
@@ -35,6 +29,12 @@ const ArtistDetail = () => {
       console.error('Error fetching artist:', error);
     }
   };
+
+  useEffect(() => {
+    if (id) {
+      fetchArtistData();
+    }
+  }, [id, fetchArtistData]);
 
   const handleFollow = async () => {
     try {

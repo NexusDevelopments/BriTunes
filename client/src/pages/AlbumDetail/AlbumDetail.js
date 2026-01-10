@@ -9,12 +9,6 @@ const AlbumDetail = () => {
   const [album, setAlbum] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      fetchAlbum();
-    }
-  }, [id]);
-
   const fetchAlbum = async () => {
     try {
       const data = await spotifyAPI.getAlbum(id);
@@ -23,6 +17,12 @@ const AlbumDetail = () => {
       console.error('Error fetching album:', error);
     }
   };
+
+  useEffect(() => {
+    if (id) {
+      fetchAlbum();
+    }
+  }, [id, fetchAlbum]);
 
   const handleSave = async () => {
     try {
