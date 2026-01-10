@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import LibrarySidebar from '../LibrarySidebar/LibrarySidebar';
 import Queue from '../Queue/Queue';
 import NowPlaying from '../NowPlaying/NowPlaying';
-import MusicPlayer from '../MusicPlayer/MusicPlayer';
+import MusicPlayer from '../MusicPlayer';
 import './MainLayout.css';
 
 const MainLayout = ({ children }) => {
