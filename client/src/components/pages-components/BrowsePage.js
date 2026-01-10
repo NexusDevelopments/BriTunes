@@ -1,33 +1,35 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 
-import makeAxiosRequest from '../../utilities/makeAxiosRequest'
+import { getBrowseCategories } from '../../services/musicApi'
+import { MessageContext } from '../../utilities/context'
 
 import BrowseCard from '../featured-components/BrowseCard'
 import PageTitle from '../featured-components/PageTitle'
 
 export default function BrowsePage() {
-    const [genre, setGenre] = useState([])
+    const setMessage = useContext(MessageContext)
+    const [categories, setCategories] = useState([])
 
     useEffect(() => {
-        const [source, makeRequest] = makeAxiosRequest('https://api.spotify.com/v1/browse/categories?limit=50')
-
-        makeRequest()
+        getBrowseCategories()
             .then((data) => {
-                setGenre(data.categories.items)
+                setCategories(data)
             })
-            .catch((error) => console.log(error))
-        
-        return () => source.cancel()
+            .catch((error) => {
+                console.error('Browse error:', error)
+                setMessage(`ERROR: ${error}`)
+            })
+    // eslint-disable-next-line
     }, [])
 
     return (
-        <div className="page-content">
-            <div className='browsePage'>
-                <PageTitle name='Browse All' />
-                <div className="browseGrid">
-                    {genre.map((genre) => {
-                        return <BrowseCard key={genre.id} info={genre}/>
-                    })}
+        <div className='page-content'>
+            <div className='pageContent'>
+                <PageTitle title='Browse All' />
+                <div className='BrowseGrid'>
+                    {categories.map((category) => (
+                        <BrowseCard key={category.id} info={category} />
+                    ))}
                 </div>
             </div>
         </div>

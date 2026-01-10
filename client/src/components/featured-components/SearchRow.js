@@ -1,35 +1,28 @@
 import React, {useEffect, useState} from 'react'
 
-import makeAxiosRequest from '../../utilities/makeAxiosRequest'
+import { searchMusic } from '../../services/musicApi'
 
 import SearchRowTitle from './SearchRowTitle'
 import SearchRowGrid from './SearchRowGrid'
 
 export default function SearchRow({title, type, query}) {
     const [result, setResult] = useState([])
-    const [formatedQuery, setformatedQuery] = useState('')
 
     useEffect(() => {
-        const formatedQuery = query.toLowerCase().split().join('+')
-        setformatedQuery(formatedQuery)
-    }, [query])
-
-
-    useEffect(() => {
-        const [source, makeRequest] = makeAxiosRequest(`https://api.spotify.com/v1/search?q=${formatedQuery}&type=${type}&limit=9`)
-        if (formatedQuery.length > 0){
-            makeRequest()
+        if (query.length > 0){
+            searchMusic(query, type)
                 .then((data) => {
-                    const key = Object.keys(data)[0]
-                    const result = data[key].items
-                    setResult(result)
+                    const results = data.data || []
+                    setResult(results)
                 })
                 .catch((error) => {
                     console.log(error)
+                    setResult([])
                 })
+        } else {
+            setResult([])
         }
-        return () => source.cancel()
-    }, [formatedQuery, type])
+    }, [query, type])
 
 
     return (

@@ -1,17 +1,19 @@
 import React from 'react'
-import Loader from 'react-loader-spinner'
+import { Bars, ThreeDots } from 'react-loader-spinner'
 
 export default function Loading({type}) {
     return (
         <div className='loading'>
         {type === 'app'? 
-        <Loader 
-            type='Bars'
-            color='#1db954'/>
+        <Bars 
+            color='#1db954'
+            height={80}
+            width={80}/>
         :
-        <Loader 
-            type='ThreeDots'
-            color='#fff'/>}
+        <ThreeDots 
+            color='#fff'
+            height={80}
+            width={80}/>}
         </div>
     )
 }
